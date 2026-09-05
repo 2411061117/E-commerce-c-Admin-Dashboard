@@ -1,13 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema, type SignInInput } from "@ecommerce/shared";
-import { Alert, Button, Card, Form, Input, Typography } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { PasswordField } from "../app/PasswordField";
 import { useAuth } from "../modules/auth/AuthProvider";
 import { mapAuthError } from "../modules/auth/errors";
 import { useSignIn } from "../modules/auth/hooks";
-
-const { Title } = Typography;
 
 interface LoginLocationState {
   from?: { pathname: string };
@@ -45,54 +43,68 @@ export function LoginPage() {
   });
 
   return (
-    <div className="flex justify-center pt-12">
-      <Card className="w-full max-w-sm">
-        <Title level={3}>Đăng nhập Admin</Title>
-        {signInMutation.isError && (
-          <Alert
-            className="mb-4"
-            type="error"
-            showIcon
-            message={mapAuthError(signInMutation.error)}
-          />
-        )}
-        <Form layout="vertical" onFinish={onSubmit}>
-          <Controller
-            name="email"
-            control={control}
-            render={({ field }) => (
-              <Form.Item
-                label="Email"
-                validateStatus={errors.email ? "error" : ""}
-                help={errors.email?.message}
-              >
-                <Input {...field} autoComplete="email" />
-              </Form.Item>
-            )}
-          />
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <Form.Item
-                label="Mật khẩu"
-                validateStatus={errors.password ? "error" : ""}
-                help={errors.password?.message}
-              >
-                <Input.Password {...field} autoComplete="current-password" />
-              </Form.Item>
-            )}
-          />
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            loading={signInMutation.isPending}
-          >
-            Đăng nhập
-          </Button>
-        </Form>
-      </Card>
-    </div>
+    <>
+      <h1>Đăng nhập Admin</h1>
+      <p className="auth-subcopy">
+        Đăng nhập để truy cập bảng điều khiển quản trị.
+      </p>
+
+      {signInMutation.isError && (
+        <div className="auth-form-alert">
+          {mapAuthError(signInMutation.error)}
+        </div>
+      )}
+
+      <form onSubmit={onSubmit} noValidate>
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <div className={`auth-field${errors.email ? " has-error" : ""}`}>
+              <label htmlFor="email">Email</label>
+              <input
+                {...field}
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                autoComplete="email"
+              />
+              {errors.email && (
+                <p className="auth-field-error">{errors.email.message}</p>
+              )}
+            </div>
+          )}
+        />
+        <Controller
+          name="password"
+          control={control}
+          render={({ field }) => (
+            <div
+              className={`auth-field${errors.password ? " has-error" : ""}`}
+            >
+              <label htmlFor="password">Mật khẩu</label>
+              <PasswordField
+                id="password"
+                name={field.name}
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                autoComplete="current-password"
+              />
+              {errors.password && (
+                <p className="auth-field-error">{errors.password.message}</p>
+              )}
+            </div>
+          )}
+        />
+        <button
+          type="submit"
+          className="auth-submit-btn"
+          disabled={signInMutation.isPending}
+        >
+          Đăng nhập
+        </button>
+      </form>
+    </>
   );
 }
