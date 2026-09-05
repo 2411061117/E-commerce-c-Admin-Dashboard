@@ -1,0 +1,12 @@
+{
+  "name": "ecommerce-practice",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:customer": "pnpm --filter customer dev",
+    "dev:admin": "pnpm --filter admin dev",
+    "build": "pnpm -r --if-present build",
+    "typecheck": "pnpm -r --if-present typecheck"
+  },
+  "packageManager": "pnpm@9.15.9"
+}
