@@ -8,6 +8,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@ecommerce/supabase-client": "workspace:^",
+    "zod": "^4.5.4"
+  },
   "devDependencies": {
     "typescript": "~6.0.2"
   }
