@@ -9,4 +9,10 @@ body,
 
 body {
   margin: 0;
+  font-family:
+    "Be Vietnam Pro",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }

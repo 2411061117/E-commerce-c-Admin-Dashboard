@@ -1,13 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema, type SignInInput } from "@ecommerce/shared";
-import { Alert, Button, Card, Form, Input, Typography } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { PasswordField } from "../app/PasswordField";
 import { mapAuthError } from "../modules/auth/errors";
 import { useAuth } from "../modules/auth/AuthProvider";
 import { useSignIn } from "../modules/auth/hooks";
-
-const { Title } = Typography;
 
 interface LoginLocationState {
   from?: { pathname: string };
@@ -44,57 +42,79 @@ export function LoginPage() {
   });
 
   return (
-    <div className="flex justify-center pt-12">
-      <Card className="w-full max-w-sm">
-        <Title level={3}>Đăng nhập</Title>
-        {signInMutation.isError && (
-          <Alert
-            className="mb-4"
-            type="error"
-            showIcon
-            message={mapAuthError(signInMutation.error)}
-          />
-        )}
-        <Form layout="vertical" onFinish={onSubmit}>
-          <Controller
-            name="email"
-            control={control}
-            render={({ field }) => (
-              <Form.Item
-                label="Email"
-                validateStatus={errors.email ? "error" : ""}
-                help={errors.email?.message}
-              >
-                <Input {...field} autoComplete="email" />
-              </Form.Item>
-            )}
-          />
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <Form.Item
-                label="Mật khẩu"
-                validateStatus={errors.password ? "error" : ""}
-                help={errors.password?.message}
-              >
-                <Input.Password {...field} autoComplete="current-password" />
-              </Form.Item>
-            )}
-          />
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            loading={signInMutation.isPending}
-          >
-            Đăng nhập
-          </Button>
-        </Form>
-        <div className="mt-4 text-center">
-          Chưa có tài khoản? <Link to="/register">Đăng ký</Link>
+    <>
+      <h1>Đăng nhập</h1>
+      <p className="auth-subcopy">
+        Nhập thông tin tài khoản để tiếp tục mua sắm.
+      </p>
+
+      {signInMutation.isError && (
+        <div className="auth-form-alert">
+          {mapAuthError(signInMutation.error)}
         </div>
-      </Card>
-    </div>
+      )}
+
+      <form onSubmit={onSubmit} noValidate>
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <div className={`auth-field${errors.email ? " has-error" : ""}`}>
+              <label htmlFor="email">Email</label>
+              <input
+                {...field}
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                autoComplete="email"
+              />
+              {errors.email && (
+                <p className="auth-field-error">{errors.email.message}</p>
+              )}
+            </div>
+          )}
+        />
+        <Controller
+          name="password"
+          control={control}
+          render={({ field }) => (
+            <div
+              className={`auth-field${errors.password ? " has-error" : ""}`}
+            >
+              <div className="auth-field-row">
+                <label htmlFor="password">Mật khẩu</label>
+                <button type="button" className="auth-link-quiet">
+                  Quên mật khẩu?
+                </button>
+              </div>
+              <PasswordField
+                id="password"
+                name={field.name}
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                autoComplete="current-password"
+              />
+              {errors.password && (
+                <p className="auth-field-error">{errors.password.message}</p>
+              )}
+            </div>
+          )}
+        />
+        <button
+          type="submit"
+          className="auth-submit-btn"
+          disabled={signInMutation.isPending}
+        >
+          Đăng nhập
+        </button>
+      </form>
+      <p className="auth-signup-line">
+        Chưa có tài khoản?{" "}
+        <Link to="/register" className="auth-link">
+          Đăng ký
+        </Link>
+      </p>
+    </>
   );
 }
